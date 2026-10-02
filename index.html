@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>our monthsary arcade</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0d0b14;
+      color: #f3f4f6;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #181524;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #3b3355;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between custom-scrollbar selection:bg-pink-500 selection:text-white">
+
+  <!-- NAVIGATION -->
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-[#0d0b14]/80 border-b border-pink-500/10 px-4 lg:px-8 py-3 transition-all duration-300">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('wordle')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center shadow-lg shadow-pink-500/20">
+          <i class="fa-solid fa-gamepad text-white text-lg"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-none tracking-tight text-white">MONTHSARY ARCADE</h1>
+          <span class="text-[10px] text-pink-400 font-semibold tracking-wider uppercase">Custom Gift Edition</span>
+        </div>
+      </div>
+
+      <nav class="flex items-center space-x-1 sm:space-x-2 bg-[#161224] p-1.5 rounded-2xl border border-white/5">
+        <button onclick="switchTab('wordle')" id="nav-wordle" class="nav-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 text-white bg-pink-500/20 border border-pink-500/30">
+          <i class="fa-solid fa-font text-pink-400 mr-1.5"></i>wordle
+        </button>
+        <button onclick="switchTab('coupons')" id="nav-coupons" class="nav-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 text-gray-400 hover:text-white hover:bg-white/5">
+          <i class="fa-solid fa-ticket text-purple-400 mr-1.5"></i>coupons
+        </button>
+        <button onclick="switchTab('playlist')" id="nav-playlist" class="nav-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 text-gray-400 hover:text-white hover:bg-white/5">
+          <i class="fa-solid fa-music text-emerald-400 mr-1.5"></i>playlist
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-5xl mx-auto px-4 py-8 w-full flex-grow">
+
+    <!-- HERO WELCOME -->
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-300 text-xs font-medium mb-3">
+        <i class="fa-solid fa-sparkles text-pink-400"></i>
+        <span>happy monthsary my badjao!</span>
+      </div>
+      <h2 class="text-3xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-300 to-indigo-400 tracking-tight mb-2">
+        our love arcade & playlist
+      </h2>
+      <p class="text-gray-400 text-xs sm:text-sm max-w-lg mx-auto">
+        play our love Wordle game, claim your exclusive coupon and listen to our custom playlist made just for you!
+      </p>
+    </div>
+
+    <!-- ==================================== -->
+    <!-- SECTION 1: WORDLE -->
+    <!-- ==================================== -->
+    <section id="tab-wordle" class="tab-content">
+      <div class="max-w-md mx-auto bg-[#141022] border border-white/10 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-heart text-pink-500"></i> monthsary wordle
+            </h3>
+            <p class="text-xs text-gray-400">guess the 5-letter secret love word!</p>
+          </div>
+          <button onclick="resetWordle()" class="text-xs px-3 py-1.5 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg transition border border-white/10">
+            <i class="fa-solid fa-rotate-right mr-1"></i>reset
+          </button>
+        </div>
+
+        <div id="wordle-grid" class="grid grid-rows-6 gap-2 mb-6"></div>
+        <div id="wordle-keyboard" class="space-y-1.5"></div>
+      </div>
+    </section>
+
+    <!-- ==================================== -->
+    <!-- SECTION 2: SCRATCH COUPONS (1/1 LIMIT) -->
+    <!-- ==================================== -->
+    <section id="tab-coupons" class="tab-content hidden">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-6">
+          <h3 class="text-2xl font-bold text-white">redeemable love coupons</h3>
+          <p class="text-xs text-gray-400 mt-1">scratch off to reveal! you can only redeem <span class="text-pink-400 font-bold">1 coupon</span>, so pick wisely ❤️</p>
+        </div>
+
+        <div id="coupons-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+      </div>
+    </section>
+
+    <!-- ==================================== -->
+    <!-- SECTION 3: SPOTIFY STYLE PLAYLIST -->
+    <!-- ==================================== -->
+    <section id="tab-playlist" class="tab-content hidden">
+      <div class="max-w-4xl mx-auto bg-[#120f1d] border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row min-h-[500px]">
+        
+        <div class="w-full md:w-80 bg-[#181427] p-6 border-b md:border-b-0 md:border-r border-white/10 flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-bold text-emerald-400 tracking-wider uppercase mb-4 flex items-center gap-2">
+              <i class="fa-brands fa-spotify text-lg"></i> now playing
+            </div>
+            <div id="now-playing-cover" class="w-full aspect-square bg-cover bg-center rounded-2xl shadow-xl mb-4 border border-white/10 relative group">
+              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition rounded-2xl flex items-center justify-center text-xs text-white text-center p-3">
+                <span id="now-playing-memory">song dedications!</span>
+              </div>
+            </div>
+            <h4 id="now-playing-title" class="text-lg font-bold text-white truncate">select a song</h4>
+            <p id="now-playing-artist" class="text-xs text-gray-400 truncate mb-4">your custom playlist</p>
+          </div>
+
+          <div class="bg-[#0f0c18] p-4 rounded-2xl border border-white/5">
+            <audio id="main-audio-player" class="hidden"></audio>
+            
+            <div class="mb-3">
+              <input type="range" id="audio-seek" value="0" max="100" class="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500">
+              <div class="flex justify-between text-[10px] text-gray-500 mt-1">
+                <span id="curr-time">0:00</span>
+                <span id="dur-time">0:00</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <button onclick="prevTrack()" class="text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-backward-step"></i>
+              </button>
+              <button onclick="togglePlay()" id="play-pause-btn" class="w-12 h-12 rounded-full bg-pink-500 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition shadow-lg shadow-pink-500/30">
+                <i class="fa-solid fa-play text-lg"></i>
+              </button>
+              <button onclick="nextTrack()" class="text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-forward-step"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex-grow p-6 flex flex-col justify-between">
+          <div>
+            <h3 class="text-xl font-bold text-white mb-1">dedicated songs for you</h3>
+            <p class="text-xs text-gray-400 mb-6">click any track below to start listening.</p>
+
+            <div id="playlist-container" class="space-y-2 mb-6"></div>
+          </div>
+
+          <!-- SPOTIFY REDIRECT BUTTON -->
+          <div class="pt-4 border-t border-white/10">
+            <a id="spotify-link" href="https://open.spotify.com/playlist/0sKwBzl1GVflDxOsNs008n?si=Mz6swKEeQIG-9U--NT6b6g&utm_source=copy-link target="_blank" rel="noopener noreferrer" class="w-full py-3.5 px-4 bg-[#1DB954] hover:bg-[#1ed760] text-black font-extrabold rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-emerald-500/20 active:scale-98">
+              <i class="fa-brands fa-spotify text-xl"></i>
+              <span>listen to full playlist on spotify</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="text-center py-6 border-t border-white/5 text-gray-500 text-xs">
+    made with ❤️ for our monthsary
+  </footer>
+
+  <!-- MODALS -->
+
+  <!-- Wordle Victory Modal -->
+  <div id="wordle-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden">
+    <div class="bg-[#181428] border border-pink-500/30 rounded-3xl p-6 max-w-lg w-full text-center relative shadow-2xl max-h-[90vh] flex flex-col">
+      <div class="w-14 h-14 bg-pink-500/20 text-pink-400 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl border border-pink-500/40 flex-shrink-0">
+        <i class="fa-solid fa-heart-circle-check"></i>
+      </div>
+      <h3 class="text-2xl font-extrabold text-white mb-2 flex-shrink-0">you found the word!</h3>
+      
+      <div class="p-5 bg-pink-500/10 rounded-2xl border border-pink-500/20 mb-5 text-pink-100 text-xs sm:text-sm leading-relaxed text-left space-y-3 overflow-y-auto custom-scrollbar flex-grow" id="wordle-message-text"></div>
+      
+      <button onclick="closeModal('wordle-modal')" class="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl font-bold hover:opacity-90 transition flex-shrink-0">
+        keep playing arcade
+      </button>
+    </div>
+  </div>
+
+  <!-- Coupon Screenshot Modal -->
+  <div id="coupon-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden">
+    <div class="bg-[#181428] border border-purple-500/30 rounded-3xl p-6 max-w-md w-full text-center relative shadow-2xl">
+      <div class="w-16 h-16 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl border border-purple-500/40">
+        <i class="fa-solid fa-camera"></i>
+      </div>
+      <h3 class="text-2xl font-extrabold text-white mb-2">coupon claimed!</h3>
+      <p class="text-sm text-gray-300 mb-4" id="claimed-coupon-title">you redeemed an exclusive coupon!</p>
+      <div class="p-4 bg-purple-500/10 rounded-2xl border border-purple-500/20 mb-6 text-purple-200 text-xs">
+        <i class="fa-solid fa-triangle-exclamation text-yellow-400 mr-1"></i>
+        please <strong>take a screenshot</strong> of this card now and send it to me on chat to officially activate your reward!
+      </div>
+      <button onclick="closeModal('coupon-modal')" class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl font-bold hover:opacity-90 transition">
+        got It!
+      </button>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    /* ======================================================
+       1. WORDLE CONFIGURATION
+       ====================================================== */
+    const WORDLE_WORD = 'LOVER';
+    const WORDLE_MESSAGE = `
+      <p>To someone who isn’t romantically in love, the word "lover" is just a simple definition. it sounds like a word from a book or a casual label for a relationship. they think it just means two people who hang out, share an attraction, or spend time together. to them, it is a concept they see from the outside—something ordinary.</p>
+      <p>but when you are deeply in love—the exact way i am in love with you—the word completely transforms.</p>
+      <p>to me, calling you my lover means you are the keeper of my safest thoughts and the reason behind my happiest smiles. it means that you aren't just a part of my life; you are the person i look for in every crowded room. it means your laughter is my favorite sound, your peace is my priority, and my world is simply better because you are in it.</p>
+      <p>while someone not in love sees a "lover" as just a person they are with, i see you as my partner, my safe haven, and my future. it is the difference between just knowing a word, and feeling its entire meaning every single day because of you.</p>
+    `;
+    let currentGuess = '';
+    let wordleGuesses = [];
+    let wordleGameOver = false;
+
+    /* ======================================================
+       2. COUPONS CONFIGURATION
+       ====================================================== */
+    const COUPONS_DATA = [
+      { id: 1, title: 'make up set', desc: 'valid only today ! pick anything you like' },
+      { id: 2, title: 'unli food', desc: 'valid only today ! pick anything you like' },
+      { id: 3, title: 'dias,rbx and coins', desc: 'valid only today ! pick anything you like' }
+    ];
+    let redeemedCouponId = null;
+
+    /* ======================================================
+       3. SPOTIFY STYLE PLAYLIST
+       ====================================================== */
+    const PLAYLIST_DATA = [
+      {
+        id: 0,
+        title: "mahal magmahal",
+        artist: "esremborak",
+        audioUrl: "https://drive.google.com/file/d/1w-4Z5KlSrSeaWyDtY9l1PeRecPRFPR6y/view?usp=drivesdk",
+        cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300",
+        memory: "im dedicating this to show you that no matter how heavy or chaotic life gets, loving you is the easiest and most beautiful choice i make every single day"
+      },
+      {
+        id: 1,
+        title: "got me tangled",
+        artist: "arthur nery",
+        audioUrl: "https://drive.google.com/file/d/1QIS7GUop-hxo4m1TIjCKmokbWAi2fw2l/view?usp=drivesdk",
+        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300",
+        memory: "this is my way of telling you that you still have my undivided attention and i am happily caught up in you and everything you are"
+      },
+      {
+        id: 2,
+        title: "sure thing",
+        artist: "miguel",
+        audioUrl: "https://drive.google.com/file/d/1SNUQKJqloI6NGokL4xWzVH22IQFiB8Z9/view?usp=drivesdk",
+        cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300",
+        memory: "i give you this song as a promise of stability; no matter what doubts or storms come our way, my love for you is a guarantee, and i will always be your safe space"
+      }
+    ];
+
+    let currentTrackIndex = 0;
+    let isPlaying = false;
+    const audioPlayer = document.getElementById('main-audio-player');
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(el => {
+        el.classList.remove('text-white', 'bg-pink-500/20', 'border', 'border-pink-500/30');
+        el.classList.add('text-gray-400');
+      });
+
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+      const activeNav = document.getElementById(`nav-${tabName}`);
+      activeNav.classList.add('text-white', 'bg-pink-500/20', 'border', 'border-pink-500/30');
+      activeNav.classList.remove('text-gray-400');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    /* WORDLE FUNCTIONS */
+    function initWordle() {
+      const grid = document.getElementById('wordle-grid');
+      grid.innerHTML = '';
+      for (let i = 0; i < 6; i++) {
+        const row = document.createElement('div');
+        row.className = 'grid grid-cols-5 gap-1.5';
+        for (let j = 0; j < 5; j++) {
+          const cell = document.createElement('div');
+          cell.id = `w-cell-${i}-${j}`;
+          cell.className = 'w-full aspect-square rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-lg font-bold text-white uppercase transition-all duration-300';
+          row.appendChild(cell);
+        }
+        grid.appendChild(row);
+      }
+      renderKeyboard();
+    }
+
+    function renderKeyboard() {
+      const kb = document.getElementById('wordle-keyboard');
+      const layout = [
+        ['Q','W','E','R','T','Y','U','I','O','P'],
+        ['A','S','D','F','G','H','J','K','L'],
+        ['ENTER','Z','X','C','V','B','N','M','BACK']
+      ];
+      kb.innerHTML = '';
+      layout.forEach(row => {
+        const r = document.createElement('div');
+        r.className = 'flex justify-center gap-1';
+        row.forEach(key => {
+          const btn = document.createElement('button');
+          btn.innerText = key === 'BACK' ? '⌫' : key;
+          btn.className = `px-2 py-2.5 rounded-lg text-xs font-bold transition ${
+            key.length > 1 ? 'bg-pink-600/50 text-white px-3' : 'bg-white/10 text-white hover:bg-white/20'
+          }`;
+          btn.onclick = () => handleKeyPress(key);
+          r.appendChild(btn);
+        });
+        kb.appendChild(r);
+      });
+    }
+
+    function handleKeyPress(key) {
+      if (wordleGameOver) return;
+      if (key === 'BACK') {
+        currentGuess = currentGuess.slice(0, -1);
+      } else if (key === 'ENTER') {
+        if (currentGuess.length === 5) submitWordleGuess();
+      } else if (currentGuess.length < 5 && /^[A-Z]$/.test(key)) {
+        currentGuess += key;
+      }
+      updateWordleGrid();
+    }
+
+    function updateWordleGrid() {
+      const row = wordleGuesses.length;
+      if (row >= 6) return;
+      for (let col = 0; col < 5; col++) {
+        const cell = document.getElementById(`w-cell-${row}-${col}`);
+        cell.innerText = currentGuess[col] || '';
+      }
+    }
+
+    function submitWordleGuess() {
+      const row = wordleGuesses.length;
+      const target = WORDLE_WORD.toUpperCase();
+      
+      for (let col = 0; col < 5; col++) {
+        const cell = document.getElementById(`w-cell-${row}-${col}`);
+        const char = currentGuess[col];
+        if (char === target[col]) {
+          cell.className += ' bg-emerald-500 border-emerald-400 text-white';
+        } else if (target.includes(char)) {
+          cell.className += ' bg-amber-500 border-amber-400 text-white';
+        } else {
+          cell.className += ' bg-gray-700 border-gray-600 text-gray-400';
+        }
+      }
+
+      wordleGuesses.push(currentGuess);
+
+      if (currentGuess === target) {
+        wordleGameOver = true;
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        document.getElementById('wordle-message-text').innerHTML = WORDLE_MESSAGE;
+        setTimeout(() => document.getElementById('wordle-modal').classList.remove('hidden'), 500);
+      } else if (wordleGuesses.length >= 6) {
+        wordleGameOver = true;
+        alert(`Nice try! The secret word was ${target}`);
+      }
+
+      currentGuess = '';
+    }
+
+    function resetWordle() {
+      wordleGuesses = [];
+      currentGuess = '';
+      wordleGameOver = false;
+      initWordle();
+    }
+
+    /* COUPON FUNCTIONS */
+    function initCoupons() {
+      const container = document.getElementById('coupons-grid');
+      container.innerHTML = '';
+      COUPONS_DATA.forEach(coupon => {
+        const isRedeemed = redeemedCouponId === coupon.id;
+        const isDisabled = redeemedCouponId !== null && !isRedeemed;
+
+        const card = document.createElement('div');
+        card.className = `relative rounded-3xl p-5 border transition-all ${
+          isRedeemed ? 'bg-pink-900/30 border-pink-500' : isDisabled ? 'bg-gray-900/40 border-gray-800 opacity-40' : 'bg-[#181427] border-white/10 hover:border-pink-500/50'
+        }`;
+
+        card.innerHTML = `
+          <div class="text-center py-4">
+            <i class="fa-solid fa-gift text-3xl text-pink-400 mb-2"></i>
+            <h4 class="font-bold text-white text-base mb-1">${coupon.title}</h4>
+            <p class="text-xs text-gray-400 mb-4">${coupon.desc}</p>
+            <button onclick="redeemCoupon(${coupon.id})" ${isDisabled || isRedeemed ? 'disabled' : ''} class="px-4 py-2 rounded-xl text-xs font-bold transition ${
+              isRedeemed ? 'bg-pink-500 text-white' : 'bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:opacity-90'
+            }">
+              ${isRedeemed ? 'Redeemed ✓' : 'Redeem Coupon'}
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function redeemCoupon(id) {
+      if (redeemedCouponId !== null) return;
+      redeemedCouponId = id;
+      const coupon = COUPONS_DATA.find(c => c.id === id);
+      document.getElementById('claimed-coupon-title').innerText = `You claimed: "${coupon.title}"`;
+      document.getElementById('coupon-modal').classList.remove('hidden');
+      confetti({ particleCount: 80, spread: 60 });
+      initCoupons();
+    }
+
+    /* PLAYLIST FUNCTIONS */
+    function initPlaylist() {
+      const container = document.getElementById('playlist-container');
+      container.innerHTML = '';
+
+      PLAYLIST_DATA.forEach((track, idx) => {
+        const item = document.createElement('div');
+        item.className = `p-3 rounded-2xl flex items-center justify-between cursor-pointer border transition-all ${
+          currentTrackIndex === idx ? 'bg-pink-500/20 border-pink-500/40 text-white' : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-300'
+        }`;
+        item.onclick = () => loadTrack(idx, true);
+        item.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <img src="${track.cover}" class="w-10 h-10 rounded-xl object-cover">
+            <div>
+              <h5 class="text-sm font-bold truncate">${track.title}</h5>
+              <p class="text-xs text-gray-400 truncate">${track.artist}</p>
+            </div>
+          </div>
+          <i class="fa-solid ${currentTrackIndex === idx && isPlaying ? 'fa-pause text-pink-400' : 'fa-play text-gray-500'} text-xs"></i>
+        `;
+        container.appendChild(item);
+      });
+
+      loadTrack(0, false);
+    }
+
+    function loadTrack(index, autoPlay = true) {
+      currentTrackIndex = index;
+      const track = PLAYLIST_DATA[index];
+
+      document.getElementById('now-playing-title').innerText = track.title;
+      document.getElementById('now-playing-artist').innerText = track.artist;
+      document.getElementById('now-playing-memory').innerText = track.memory;
+      document.getElementById('now-playing-cover').style.backgroundImage = `url('${track.cover}')`;
+
+      audioPlayer.src = track.audioUrl;
+
+      if (autoPlay) {
+        audioPlayer.play();
+        isPlaying = true;
+      } else {
+        isPlaying = false;
+      }
+      updatePlayBtn();
+      initPlaylist();
+    }
+
+    function togglePlay() {
+      if (isPlaying) {
+        audioPlayer.pause();
+        isPlaying = false;
+      } else {
+        audioPlayer.play();
+        isPlaying = true;
+      }
+      updatePlayBtn();
+    }
+
+    function updatePlayBtn() {
+      const btn = document.getElementById('play-pause-btn');
+      btn.innerHTML = `<i class="fa-solid ${isPlaying ? 'fa-pause' : 'fa-play'} text-lg"></i>`;
+    }
+
+    function nextTrack() {
+      currentTrackIndex = (currentTrackIndex + 1) % PLAYLIST_DATA.length;
+      loadTrack(currentTrackIndex, true);
+    }
+
+    function prevTrack() {
+      currentTrackIndex = (currentTrackIndex - 1 + PLAYLIST_DATA.length) % PLAYLIST_DATA.length;
+      loadTrack(currentTrackIndex, true);
+    }
+
+    audioPlayer.ontimeupdate = () => {
+      if (audioPlayer.duration) {
+        const seek = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        document.getElementById('audio-seek').value = seek;
+        document.getElementById('curr-time').innerText = formatTime(audioPlayer.currentTime);
+        document.getElementById('dur-time').innerText = formatTime(audioPlayer.duration);
+      }
+    };
+
+    document.getElementById('audio-seek').oninput = (e) => {
+      if (audioPlayer.duration) {
+        audioPlayer.currentTime = (e.target.value / 100) * audioPlayer.duration;
+      }
+    };
+
+    function formatTime(secs) {
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    window.onload = () => {
+      initWordle();
+      initCoupons();
+      initPlaylist();
+    };
+  </script>
+</body>
+</html>
